@@ -79,6 +79,28 @@ module Enumerable
     return value
   end
 
-end
+  def my_count(arg = nil)
+    return self.length if arg == nil && !block_given?
+    counter = 0
+    if block_given?
+      i = 0
+      while i < self.length
+        counter += 1 if yield(self[i])
+        i += 1
+      end
+      return counter
+    else
+      i = 0
+      while i < self.length
+        if self[i] == arg
+          counter += 1
+        end
+        i += 1
+      end
+      return counter
+    end
+  end
 
-  print [1, 2, 5, 7].my_none? { |i|  i.even? }
+  # ary = [1, 2, 3, 5, 10, 2, 'Hi', 'Hello']
+  # print ary.my_count
+end
