@@ -47,7 +47,7 @@ module Enumerable
 
 # [].my_all? { |i| i < 4 } # False
 
-  def my_any
+  def my_any?
     value = false
     if self.empty?
       return true
@@ -63,4 +63,22 @@ module Enumerable
   end
 
   # print [1, 3, 7, 5].my_any { |ele| ele%2 == 0 }
+
+  def my_none?
+    value = true
+    if self.empty?
+      return true
+    end
+    i = 0
+    while i < self.length
+      if yield(self[i]) == true
+        return false
+      end
+      i += 1
+    end
+    return value
+  end
+
 end
+
+  print [1, 2, 5, 7].my_none? { |i|  i.even? }
