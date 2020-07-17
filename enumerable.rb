@@ -26,14 +26,13 @@ module Enumerable
       arr << self[x] if yield(self[x]) == true
       x += 1
     end
-    print arr
+    arr
   end
 
   def my_all?
     value = false
     if self.empty?
       value = true
-      print value
       return value
     else
       i = 0
@@ -46,24 +45,22 @@ module Enumerable
     
   end
 
-  print [].my_all? { |i| i < 4 } # False
+# [].my_all? { |i| i < 4 } # False
 
   def my_any
-    value= false
+    value = false
     if self.empty?
-      value = true
-      return value
+      return true
     end
-    i =0
+    i = 0
     while i < self.length
-      if yield(self[i]) ==true
-  
-        value = true
+      if yield(self[i]) == true
+        return true
       end
-      i+=1
+      i += 1
     end
-    print value    
+    return value
   end
 
-  print [2,4,7,8,9].my_any  { |x| x.odd? }
+  # print [1, 3, 7, 5].my_any { |ele| ele%2 == 0 }
 end
