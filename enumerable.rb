@@ -154,8 +154,11 @@ module Enumerable
 
 end
 
+def multiply_els(arr)
+  arr.my_inject(:*)
+end
 # (0..10).inject { |sum, number| sum + number }
 
 # print [1, 2, 3, 4].inject(2) { |sum, number| sum * number }
 
-# print [1, 2, 3, 4].my_inject(2, :+)
+print multiply_els([2, 4, 5])
