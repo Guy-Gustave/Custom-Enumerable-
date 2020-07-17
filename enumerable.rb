@@ -1,179 +1,193 @@
+# Our enumerable methods
+# rubocop:disable Metrics/ModuleLength
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity
 module Enumerable
   def my_each
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
     return enum_for unless block_given?
+
     i = 0
-    while i < self.length
-      yield(self[i])
-      i += 1     
+    while i < ary.length
+      yield(ary[i])
+      i += 1
     end
-    self
+    ary
   end
-  
+
   def my_each_with_index
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
     return enum_for unless block_given?
-    i =0
-    while i < self.length
-      yield(self[i], i)
-      i += 1   
+
+    i = 0
+    while i < ary.length
+      yield(ary[i], i)
+      i += 1
     end
-    self
+    ary
   end
 
   def my_select
-    arr= []
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+    filtered_ary = []
     x = 0
-    while x < self.length
-      arr << self[x] if yield(self[x]) == true
+    while x < ary.length
+      filtered_ary << ary[x] if yield(ary[x]) == true
       x += 1
+    end
+    filtered_ary
+  end
+
+  def my_all?
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+    value = false
+    if ary.empty?
+      value = true
+    else
+      i = 0
+      while i < ary.length
+        yield(ary[i]) || ary.empty? ? value = true : value = false
+        i += 1
+      end
+    end
+    value
+  end
+
+  def my_any?
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+
+    value = false
+    return true if ary.empty?
+
+    i = 0
+    while i < ary.length
+      return true if yield(ary[i]) == true
+
+      i += 1
+    end
+    value
+  end
+
+  def my_none?
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+
+    value = true
+    return true if ary.empty?
+
+    i = 0
+    while i < ary.length
+      return false if yield(ary[i]) == true
+
+      i += 1
+    end
+    value
+  end
+
+  def my_count(arg = nil)
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+
+    return ary.length if arg.nil? && !block_given?
+
+    counter = 0
+    i = 0
+    if block_given?
+      while i < ary.length
+        counter += 1 if yield(ary[i])
+        i += 1
+      end
+    else
+      while i < ary.length
+        counter += 1 if ary[i] == arg
+        i += 1
+      end
+    end
+    counter
+  end
+
+  def my_map
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+    return enum_for unless block_given?
+
+    i = 0
+    arr = []
+    while i < ary.length
+      arr.push(yield(ary[i]))
+      i += 1
     end
     arr
   end
 
-  def my_all?
-    value = false
-    if self.empty?
-      value = true
-      return value
-    else
-      i = 0
-      while i < self.length
-        yield(self[i]) || self.empty? ? value = true : value = false
-        i += 1
-      end
-      return value
-    end
-    
-  end
-
-# [].my_all? { |i| i < 4 } # False
-
-  def my_any?
-    value = false
-    if self.empty?
-      return true
-    end
-    i = 0
-    while i < self.length
-      if yield(self[i]) == true
-        return true
-      end
-      i += 1
-    end
-    return value
-  end
-
-  # print [1, 3, 7, 5].my_any { |ele| ele%2 == 0 }
-
-  def my_none?
-    value = true
-    if self.empty?
-      return true
-    end
-    i = 0
-    while i < self.length
-      if yield(self[i]) == true
-        return false
-      end
-      i += 1
-    end
-    return value
-  end
-
-  def my_count(arg = nil)
-    return self.length if arg == nil && !block_given?
-    counter = 0
-    if block_given?
-      i = 0
-      while i < self.length
-        counter += 1 if yield(self[i])
-        i += 1
-      end
-      return counter
-    else
-      i = 0
-      while i < self.length
-        if self[i] == arg
-          counter += 1
-        end
-        i += 1
-      end
-      return counter
-    end
-  end
-
-  # ary = [1, 2, 3, 5, 10, 2, 'Hi', 'Hello']
-  # print ary.my_count
-
-  def my_map
-    return enum_for unless block_given?
-    i = 0
-    arr = []
-    while i < self.length
-      arr.push(yield(self[i]))
-      i += 1
-    end
-    return arr
-  end
-  # print [12, 1, 1, 3, 4].my_map { |i| i * i }
-
   def my_map_proc_block(proc_arg)
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+
     return enum_for unless block_given?
+
     arr = []
     if proc_arg.nil?
       i = 0
-      while i < self.length
-        arr.push(yield(self[i]))
+      while i < ary.length
+        arr.push(yield(ary[i]))
         i += 1
       end
     else
-      self.my_each { |i| arr.push(proc_arg(i)) }
+      ary.my_each { |arr_item| arr.push(proc_arg(arr_item)) }
     end
     arr
   end
 
   def my_inject(arg = nil, sym = nil)
-    # self.is_a?(Array) ? self : self.to_a
-    acc = self[0]
-    if arg == nil && sym == nil
+    ary = self
+    ary = ary.is_a?(Array) ? ary : ary.to_a
+
+    acc = ary[0]
+    if arg.nil? && sym.nil?
       i = 1
-      while i < self.length
-        acc = yield(acc, self[i])
+      while i < ary.length
+        acc = yield(acc, ary[i])
         i += 1
       end
     elsif !arg.nil? && sym.nil?
       if arg.is_a?(Integer)
         acc = arg
         i = 0
-        while i < self.length
-          acc = yield(acc, self[i])
+        while i < ary.length
+          acc = yield(acc, ary[i])
           i += 1
         end
       elsif arg.is_a?(String) || arg.is_a?(Symbol)
-        acc = self[0]
+        acc = ary[0]
         i = 1
-        while i < self.length
-          acc = acc.send(arg, self[i])
+        while i < ary.length
+          acc = acc.send(arg, ary[i])
           i += 1
         end
       end
     elsif !arg.nil? && !sym.nil?
       acc = arg
       i = 0
-      while i < self.length
-        acc = acc.send(sym, self[i])
+      while i < ary.length
+        acc = acc.send(sym, ary[i])
         i += 1
       end
     end
-    return acc
+    acc
   end
-
 end
 
 def multiply_els(arr)
   arr.my_inject(:*)
 end
-# (0..10).inject { |sum, number| sum + number }
-
-# print [1, 2, 3, 4].inject(2) { |sum, number| sum * number }
-
-print multiply_els([2, 4, 5])
+# rubocop:enable Metrics/ModuleLength
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/PerceivedComplexity
