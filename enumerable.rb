@@ -45,16 +45,16 @@ module Enumerable
   def my_all?
     ary = self
     ary = ary.is_a?(Array) ? ary : ary.to_a
-    value = false
-    if ary.empty?
-      value = true
-    else
-      i = 0
-      while i < ary.length
-        yield(ary[i]) || ary.empty? ? value = true : value = false
-        i += 1
-      end
+    value = true
+    return true if ary.empty?
+
+    i = 0
+    while i < ary.length
+      return false unless yield(ary[i])
+
+      i += 1
     end
+
     value
   end
 
