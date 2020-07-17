@@ -103,4 +103,59 @@ module Enumerable
 
   # ary = [1, 2, 3, 5, 10, 2, 'Hi', 'Hello']
   # print ary.my_count
+
+  def my_map
+    return enum_for unless block_given?
+    i = 0
+    arr = []
+    while i < self.length
+      arr.push(yield(self[i]))
+      i += 1
+    end
+    return arr
+  end
+  # print [12, 1, 1, 3, 4].my_map { |i| i * i }
+
+  def my_inject(arg = nil, sym = nil)
+    # self.is_a?(Array) ? self : self.to_a
+    acc = self[0]
+    if arg == nil && sym == nil
+      i = 1
+      while i < self.length
+        acc = yield(acc, self[i])
+        i += 1
+      end
+    elsif !arg.nil? && sym.nil?
+      if arg.is_a?(Integer)
+        acc = arg
+        i = 0
+        while i < self.length
+          acc = yield(acc, self[i])
+          i += 1
+        end
+      elsif arg.is_a?(String) || arg.is_a?(Symbol)
+        acc = self[0]
+        i = 1
+        while i < self.length
+          acc = acc.send(arg, self[i])
+          i += 1
+        end
+      end
+    elsif !arg.nil? && !sym.nil?
+      acc = arg
+      i = 0
+      while i < self.length
+        acc = acc.send(sym, self[i])
+        i += 1
+      end
+    end
+    return acc
+  end
+
 end
+
+# (0..10).inject { |sum, number| sum + number }
+
+# print [1, 2, 3, 4].inject(2) { |sum, number| sum * number }
+
+# print [1, 2, 3, 4].my_inject(2, :+)
