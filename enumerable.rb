@@ -29,10 +29,24 @@ module Enumerable
     print arr
   end
 
-  arr = [1, 2, 3, 4]
-  arr.my_select { |ele| ele.even? }
-
   def my_all?
-    my_each{ |ele| return false if yield(ele)== true }    
+    value = false
+    if self.empty?
+      value = true
+      print value
+      return value
+    else
+      i = 0
+      while i < self.length
+        yield(self[i]) || self.empty? ? value = true : value = false
+        i += 1
+      end
+      print value
+      return value
+    end
+    
   end
+
+  [].my_all? { |i| i < 4 } # False
+
 end
