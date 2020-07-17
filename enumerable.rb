@@ -41,12 +41,29 @@ module Enumerable
         yield(self[i]) || self.empty? ? value = true : value = false
         i += 1
       end
-      print value
       return value
     end
     
   end
 
-  [].my_all? { |i| i < 4 } # False
+  print [].my_all? { |i| i < 4 } # False
 
+  def my_any
+    value= false
+    if self.empty?
+      value = true
+      return value
+    end
+    i =0
+    while i < self.length
+      if yield(self[i]) ==true
+  
+        value = true
+      end
+      i+=1
+    end
+    print value    
+  end
+
+  print [2,4,7,8,9].my_any  { |x| x.odd? }
 end
