@@ -116,6 +116,21 @@ module Enumerable
   end
   # print [12, 1, 1, 3, 4].my_map { |i| i * i }
 
+  def my_map_proc_block(proc_arg)
+    return enum_for unless block_given?
+    arr = []
+    if proc_arg.nil?
+      i = 0
+      while i < self.length
+        arr.push(yield(self[i]))
+        i += 1
+      end
+    else
+      self.my_each { |i| arr.push(proc_arg(i)) }
+    end
+    arr
+  end
+
   def my_inject(arg = nil, sym = nil)
     # self.is_a?(Array) ? self : self.to_a
     acc = self[0]
